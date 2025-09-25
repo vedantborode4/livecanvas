@@ -9,11 +9,13 @@
     "dev": "npm run build && npm run start"
   },
   "dependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@types/ws": "^8.18.1",
     "ws": "^8.18.3"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "@repo/typescript-config": "workspace:*"
+  }
 }
