@@ -27,6 +27,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@repo/zod-schema':
+        specifier: workspace:*
+        version: link:../../packages/zod-schema
       '@types/express':
         specifier: ^5.0.3
         version: 5.0.3
@@ -162,6 +165,12 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+
+  packages/zod-schema:
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
 
 packages:
 
