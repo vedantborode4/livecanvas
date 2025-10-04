@@ -20,6 +20,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@repo/zod-schema": "workspace:*",
+    "@repo/backend-common":"workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10"

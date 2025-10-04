@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
-import { SignupSchema } from "@repo/zod-schema/type"
+import { SigninSchema, SignupSchema } from "@repo/zod-schema/type"
 import { prismaClient } from "@repo/db/client";
 import bcrypt from "bcrypt";
+import {JWT_SECRET} from "@repo/backend-common/config";
+import jwt  from "jsonwebtoken";
 
 export async function signup(req:Request, res: Response) {
     const parsedData = SignupSchema.safeParse(req.body);
 
     if(!parsedData.success) {
-        return res.status(401).json({
+        res.status(401).json({
             error:  parsedData.error
         })
+        return
     }
 
     try {
@@ -33,7 +36,7 @@ export async function signup(req:Request, res: Response) {
             }
         })
     
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(200).json({ message: 'User registered successfully' });
     } catch (error) {
         res
         .status(500)
@@ -44,5 +47,53 @@ export async function signup(req:Request, res: Response) {
     }
 }
 export async function signin(req:Request, res: Response) {
+    const parsedData = SigninSchema.safeParse(req.body);
+
+    if(!parsedData.success){
+        return res.status(401)
+        .json({
+            "error": parsedData.error
+        })
+    }
+
+    try {
+        const user = await prismaClient.user.findUnique({
+            where: {
+                email: parsedData.data.email
+            }
+        })
     
+        if(!user){
+            res.status(401).json({ message: "User not found" });
+            return;
+        }
+    
+        const isValid = await bcrypt.compare(parsedData.data.password, user.password,);
+    
+        if(!isValid){
+            res.status(401).json({ message: "Incorrect Password" });
+            return;
+        }
+    
+        const token = jwt.sign({
+            userId: user.id
+        }, JWT_SECRET,
+        {
+            expiresIn: "72h"
+        }
+        )
+    
+        res.status(200)
+        .json({
+            token: token,
+            Message:  "Signin Successful"
+        })
+
+    } catch (error) {
+        res.status(403)
+        .json({
+            message: "Internal server error",
+            error: error
+        })
+    }
 }
