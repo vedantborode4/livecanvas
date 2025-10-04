@@ -27,6 +27,11 @@ out/
 build
 dist
 
+*.tsbuildinfo
+packages/zod-schema/src/*.js
+packages/zod-schema/src/*.d.ts
+packages/zod-schema/src/*.d.ts.map
+**/*.tsbuildinfo
 
 # Debug
 npm-debug.log*
