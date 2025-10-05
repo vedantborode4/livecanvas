@@ -13,7 +13,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
         .json({ message: "Unauthorized: No authorization header provided" });
     }
     
-    const token = header.split(" ")[1];
+    const token = header?.startsWith("Bearer ") ? header.split(" ")[1] : header;
 
     if (!token) {
         return res
