@@ -1,20 +1,7 @@
-import { prismaClient } from "@repo/db/client";
-import { Request, Response } from "express";
+import { Router } from "express";
+import { chats, getRoomFromSlug } from "../controllers/chats.controllers";
 
-export async function chats(req:Request , res: Response) {
-    const roomId = Number(req.params.roomId);
+export const chatRouter:Router = Router();
 
-    const messages = await prismaClient.chat.findMany({
-        where: {
-            roomId: roomId
-        },
-        orderBy: {
-            id: "desc"
-        },
-        take: 50
-    })
-
-    res.json({
-        messages
-    })
-}
+chatRouter.post("/:roomId", chats)
+chatRouter.post("/:slug", getRoomFromSlug)
