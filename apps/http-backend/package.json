@@ -11,6 +11,7 @@
   "dependencies": {
     "@repo/db": "workspace:*",
     "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2"
   },
@@ -18,9 +19,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@repo/backend-common": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/zod-schema": "workspace:*",
-    "@repo/backend-common":"workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10"
