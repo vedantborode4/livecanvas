@@ -57,10 +57,46 @@ export async function initDraw (canvas:HTMLCanvasElement, roomId: string) {
             
             clearCanvas(exisitingShape, canvas,ctx);
 
-            ctx.strokeStyle = "white"
+            ctx.strokeStyle = "yellow"
             ctx.strokeRect(startX,startY, width,height)
         }
     })
+//     canvas.addEventListener("mousedown", (e) => {
+//     clicked = true;
+//     const rect = canvas.getBoundingClientRect();
+//     startX = e.clientX - rect.left;
+//     startY = e.clientY - rect.top;
+// });
+
+// canvas.addEventListener("mouseup", (e) => {
+//     clicked = false;
+//     const rect = canvas.getBoundingClientRect();
+//     const width = (e.clientX - rect.left) - startX;
+//     const height = (e.clientY - rect.top) - startY;
+
+//     exisitingShape.push({
+//         type: "rect",
+//         x: startX,
+//         y: startY,
+//         width,
+//         height
+//     });
+
+//     clearCanvas(exisitingShape, canvas, ctx);
+// });
+
+// canvas.addEventListener("mousemove", (e) => {
+//     if (!clicked) return;
+
+//     const rect = canvas.getBoundingClientRect();
+//     const width = (e.clientX - rect.left) - startX;
+//     const height = (e.clientY - rect.top) - startY;
+
+//     clearCanvas(exisitingShape, canvas, ctx);
+//     ctx.strokeStyle = "yellow";
+//     ctx.strokeRect(startX, startY, width, height);
+// });
+
 }
 
 function clearCanvas(exisitingShape:Shape[], canvas:HTMLCanvasElement, ctx:CanvasRenderingContext2D){
@@ -70,15 +106,33 @@ function clearCanvas(exisitingShape:Shape[], canvas:HTMLCanvasElement, ctx:Canva
 
     exisitingShape.map((shape) => {
         if(shape.type === "rect"){
-            ctx.strokeStyle ==="white"
+            ctx.strokeStyle = "yellow"
             ctx.strokeRect(shape.x, shape.y, shape.width, shape.height)
         }
     })
 
 }
+// function clearCanvas(
+//     exisitingShape: Shape[],
+//     canvas: HTMLCanvasElement,
+//     ctx: CanvasRenderingContext2D
+// ) {
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     ctx.fillStyle = "black";
+//     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//     exisitingShape.forEach((shape) => {
+//         if (shape.type === "rect") {
+//             ctx.strokeStyle = "yellow";
+//             ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+//         }
+//     });
+// }
 
 async function getExistingShape (roomId: string) {
-    const res = await axios.get(`${backendURL}/chats/${roomId}`);
+    console.log("Fetching shapes from:", `${backendURL}/chat/room/${roomId}`);
+    const res = await axios.post(`${backendURL}/chat/room/${roomId}`);
 
     const messages = res.data.messages;
 
