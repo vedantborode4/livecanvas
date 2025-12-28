@@ -19,6 +19,6 @@ app.use(cors({
 app.use(express.json());
 app.use("/api/v1", userRouter)
 app.use("/api/v1/room",authMiddleware, roomRouter )
-app.use("api/v1/chat", authMiddleware, chatRouter)
+app.use("/api/v1/chat", authMiddleware, chatRouter)
 
 app.listen(3001)
