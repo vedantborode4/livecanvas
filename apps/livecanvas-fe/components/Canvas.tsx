@@ -1,7 +1,17 @@
 import { initDraw } from "@/draw";
 import { useEffect, useRef } from "react";
 
-export function Canvas ({roomId}:{roomId: string}) {
+export function Canvas (
+    {   
+        roomId, 
+        socket,
+        token
+    }:{
+        roomId: string, 
+        socket:WebSocket,
+        token: string
+    }) {
+
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect (()=> {
@@ -22,11 +32,11 @@ export function Canvas ({roomId}:{roomId: string}) {
                 window.addEventListener("resize", resizeCanvas);
 
 
-                initDraw(canvas, roomId);
+                initDraw(canvas, roomId, socket, token);
 
             }
         }
-    }, [canvasRef]);
+    }, []);
 
     return (
         <canvas width={1080} height={820} ref={canvasRef} ></canvas>
