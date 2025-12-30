@@ -1,9 +1,8 @@
-"use client"
 import { initDraw } from "@/draw";
 import { useEffect, useRef } from "react";
 
 export function Canvas ({roomId}:{roomId: string}) {
-        const canvasRef = useRef<HTMLCanvasElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect (()=> {
 
@@ -29,14 +28,7 @@ export function Canvas ({roomId}:{roomId: string}) {
         }
     }, [canvasRef]);
 
-
     return (
-        <div className="">
-            <canvas width={1080} height={820} ref={canvasRef} ></canvas>
-            <div className="absolute top-20 left-50">
-                <button className="rounded bg-gray text-black " >Rectangle</button>
-                <button className="rounded bg-gray text-black " >Circle</button>
-            </div>
-        </div>
+        <canvas width={1080} height={820} ref={canvasRef} ></canvas>
     )
 }
