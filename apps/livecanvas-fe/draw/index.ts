@@ -61,9 +61,9 @@ export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket
         exisitingShape.push(shape)
 
         socket.send(JSON.stringify({
-            type: "chat", 
-            roomId,
-            message:JSON.stringify({shape})
+        type: "chat",
+        roomId,
+        message:JSON.stringify(shape)
         }))
     })
 
@@ -167,7 +167,7 @@ async function getExistingShape (roomId: string, token:string) {
 
     const shapes = messages.map((x: {message:string})=>{
         const messageData = JSON.parse(x.message)
-        return messageData.shape
+        return messageData
     })
 
     return shapes

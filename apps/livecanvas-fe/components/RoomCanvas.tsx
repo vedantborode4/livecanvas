@@ -30,11 +30,10 @@ export function RoomCanvas ({roomId}:{roomId: string}) {
         console.log(`${WS_URL}?token=${token}`);
         ws.onopen = () => {
             setSocket(ws);
-            const data = {
-                type: "join_room",
-                roomId
-            }
-            ws.send(JSON.stringify(JSON.stringify(data)))
+            ws.send(JSON.stringify({
+            type: "join_room",
+            roomId
+            }))
         }
         
     },[token, roomId])
