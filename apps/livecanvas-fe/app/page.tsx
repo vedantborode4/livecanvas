@@ -1,120 +1,199 @@
-export default function HomePage() {
+"use client";
+
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+
+export default function Home() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = canvas.width = canvas.offsetWidth;
+    let height = canvas.height = canvas.offsetHeight;
+
+    type Dot = { x: number; y: number; vx: number; vy: number };
+    const dots: Dot[] = [];
+    const DOT_COUNT = 40;
+
+    for (let i = 0; i < DOT_COUNT; i++) {
+      dots.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+      });
+    }
+
+    const animate = () => {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+
+      dots.forEach(dot => {
+        // Move dots
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+
+        // Bounce off edges
+        if (dot.x < 0 || dot.x > width) dot.vx *= -1;
+        if (dot.y < 0 || dot.y > height) dot.vy *= -1;
+
+        // Attract to mouse
+        const dx = mouse.current.x - dot.x;
+        const dy = mouse.current.y - dot.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          dot.vx += dx * 0.0005;
+          dot.vy += dy * 0.0005;
+        }
+      });
+
+      // Draw lines between nearby dots
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.strokeStyle = `rgba(99,102,241,${1 - dist / 120})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw dots
+      dots.forEach(dot => {
+        ctx.fillStyle = "#6366F1";
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    const handleResize = () => {
+      width = canvas.width = canvas.offsetWidth;
+      height = canvas.height = canvas.offsetHeight;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.current.x = e.clientX - rect.left;
+      mouse.current.y = e.clientY - rect.top;
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
   return (
-    <main className="min-h-screen bg-white text-gray-900">
-      {/* Navbar */}
-      <header className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-black text-white flex items-center justify-center font-bold">
-            L
-          </div>
-          <span className="text-lg font-semibold">LiveCanvas</span>
+    <main className="min-h-screen flex flex-col overflow-hidden">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 fixed w-full z-20 backdrop-blur-sm bg-neutral-950/80">
+        <div className="text-2xl font-bold tracking-tight">
+          Live<span className="text-indigo-400">Canvas</span>
         </div>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-          <a href="#features" className="hover:text-black">Features</a>
-          <a href="#collaboration" className="hover:text-black">Collaboration</a>
-          <a href="#open-source" className="hover:text-black">Open Source</a>
+        <nav className="hidden md:flex items-center gap-4 text-sm text-neutral-300">
+          <Link
+            href="/signin"
+            className="px-3 py-1 rounded-md hover:bg-neutral-800 transition"
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/canvas"
+            className="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-400 transition"
+          >
+            Start Drawing
+          </Link>
         </nav>
-
-        <button className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
-          Open Canvas
-        </button>
       </header>
 
-      {/* Hero Section */}
-      <section className="px-6 py-24 max-w-7xl mx-auto text-center">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-          Draw. Think. Collaborate.
-          <br />
-          <span className="text-gray-500">In real time.</span>
+      {/* Hero */}
+      <section className="relative flex flex-col items-center justify-center text-center px-6 pt-32 pb-40">
+        {/* Canvas animation */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full -z-10"
+        />
+
+        <h1 className="text-4xl md:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
+          Your <span className="text-indigo-400">infinite canvas</span>
+          <br className="hidden md:block" /> to think and create
         </h1>
 
-        <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-          LiveCanvas is a fast, multiplayer whiteboard inspired by Excalidraw —
-          built for teams, classrooms, and solo thinking.
+        <p className="mt-6 max-w-xl text-neutral-400 text-base md:text-lg">
+          LiveCanvas is a real-time, multiplayer drawing canvas for ideas —
+          fast, distraction-free, and collaborative.
         </p>
 
-        <div className="mt-10 flex justify-center gap-4">
-          <button className="rounded-md bg-black px-6 py-3 text-white font-medium hover:bg-gray-800">
+        <div className="mt-10 flex gap-4">
+          <Link
+            href="/canvas"
+            className="px-6 py-3 rounded-lg bg-indigo-500 text-white font-medium hover:bg-indigo-400 transition-transform hover:scale-105"
+          >
             Start Drawing
-          </button>
-          <button className="rounded-md border border-gray-300 px-6 py-3 font-medium hover:bg-gray-50">
-            View Demo
-          </button>
+          </Link>
+          <Link
+            href="/signin"
+            className="px-6 py-3 rounded-lg border border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-white transition-transform hover:scale-105"
+          >
+            Sign In
+          </Link>
         </div>
       </section>
 
       {/* Features */}
-      <section
-        id="features"
-        className="px-6 py-20 max-w-7xl mx-auto"
-      >
-        <div className="grid md:grid-cols-3 gap-10">
-          <Feature
-            title="Infinite Canvas"
-            description="Sketch freely on a limitless canvas with smooth pan and zoom."
-          />
-          <Feature
-            title="Live Collaboration"
-            description="See cursors, edits, and drawings update instantly."
-          />
-          <Feature
-            title="Excalidraw-Style"
-            description="Hand-drawn aesthetics with clean, readable diagrams."
-          />
-        </div>
-      </section>
-
-      {/* Collaboration Highlight */}
-      <section
-        id="collaboration"
-        className="bg-gray-50 px-6 py-24"
-      >
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-semibold">
-            Built for real-time teamwork
-          </h2>
-          <p className="mt-4 text-gray-600 text-lg">
-            Brainstorm, design, and explain ideas together — no installs required.
-          </p>
-
-          <div className="mt-10 rounded-xl border bg-white p-8 shadow-sm text-left">
-            <ul className="space-y-4 text-gray-700">
-              <li>• Multiplayer cursors</li>
-              <li>• Instant sync using WebSockets</li>
-              <li>• Shareable room links</li>
-              <li>• Works on any device</li>
-            </ul>
-          </div>
+      <section id="features" className="px-6 py-24 border-t border-neutral-800">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+          {[
+            {
+              title: "Realtime Collaboration",
+              desc: "Draw together instantly with shared cursors and live updates.",
+            },
+            {
+              title: "Infinite Canvas",
+              desc: "Zoom, pan, and explore freely without limits.",
+            },
+            {
+              title: "Minimal & Fast",
+              desc: "Tools stay out of your way. Just create.",
+            },
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="p-6 rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
+              <h3 className="text-lg font-semibold mb-2 text-indigo-400">{feature.title}</h3>
+              <p className="text-sm text-neutral-400">{feature.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-6 py-10 border-t">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-600">
-          <span>© {new Date().getFullYear()} LiveCanvas</span>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-black">GitHub</a>
-            <a href="#" className="hover:text-black">Privacy</a>
-            <a href="#" className="hover:text-black">Terms</a>
-          </div>
-        </div>
+      <footer className="mt-auto px-6 py-6 border-t border-neutral-800 text-sm text-neutral-500 flex justify-between">
+        <span>© {new Date().getFullYear()} LiveCanvas</span>
+        <span>Built with Next.js + Tailwind</span>
       </footer>
     </main>
-  )
-}
-
-function Feature({
-  title,
-  description,
-}: {
-  title: string
-  description: string
-}) {
-  return (
-    <div className="rounded-xl border p-6 hover:shadow-sm transition">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="mt-2 text-gray-600">{description}</p>
-    </div>
-  )
+  );
 }
