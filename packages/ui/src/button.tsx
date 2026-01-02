@@ -5,18 +5,16 @@ import { ReactNode } from "react";
 interface ButtonProps {
   children: ReactNode;
   className?: string;
-  appName: string;
   onClick: () => void;
 }
 
-export const Button = ({ children, className, appName, onClick }: ButtonProps) => {
+export const Button = ({ children, className, onClick }: ButtonProps) => {
   return (
-<button
-  className={`mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 ${className}`}
-  onClick={onClick}
->
-  {children}
-</button>
-
+    <button
+      className={`px-6 py-3 rounded-lg bg-indigo-500 text-white font-medium hover:bg-indigo-400 hover:scale-105 transition-all duration-300 transform ${className}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 };
