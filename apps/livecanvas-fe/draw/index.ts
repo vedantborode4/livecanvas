@@ -12,9 +12,23 @@ type Shape = {
     centerX: number; 
     centerY: number; 
     radius: number; 
-}
-export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket:WebSocket, token:string) {
+}| {
+    type: "line";
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
 
+}|{
+    type: "pointer";
+    locX: number;
+    locY: number;
+};
+
+type SelectedElem = "rectangle" | "circle" | "line" | "pointer";
+
+export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket:WebSocket, token:string , selectedElement: SelectedElem | null) {
+    console.log(selectedElement)
     const ctx = canvas.getContext("2d");
 
     let exisitingShape: Shape[] = await getExistingShape(roomId, token);

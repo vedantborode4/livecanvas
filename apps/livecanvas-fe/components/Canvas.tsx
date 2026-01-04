@@ -1,5 +1,5 @@
 import { initDraw } from "@/draw";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function Canvas (
     {   
@@ -12,7 +12,10 @@ export function Canvas (
         token: string
     }) {
 
-    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    type SelectedElem = "rectangle" | "circle" | "line" | "pointer";
+ 
+    const [seletedElement, setSelectedElement] = useState<SelectedElem | null>(null);
 
     useEffect (()=> {
 
@@ -32,13 +35,20 @@ export function Canvas (
                 window.addEventListener("resize", resizeCanvas);
 
 
-                initDraw(canvas, roomId, socket, token);
+                initDraw(canvas, roomId, socket, token, seletedElement);
 
             }
         }
     }, []);
 
-    return (
-        <canvas width={1080} height={820} ref={canvasRef} ></canvas>
+    return (<>
+        <canvas width={window.innerWidth} height={window.innerHeight} ref={canvasRef} ></canvas>
+        <div className="absolute top-20 left-50">
+            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("rectangle")}} >Rectangle</button>
+            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("circle")}} >Circle</button>
+            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("line")}} >Line</button>
+            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("pointer")}} >Pointer</button>
+        </div>
+    </>
     )
 }

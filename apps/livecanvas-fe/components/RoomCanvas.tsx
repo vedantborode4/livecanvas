@@ -50,10 +50,6 @@ export function RoomCanvas ({roomId}:{roomId: string}) {
     return (
         <div className="">
             <Canvas roomId={roomId} socket={socket} token={token}/>
-            <div className="absolute top-20 left-50">
-                <button className="rounded bg-gray text-black " >Rectangle</button>
-                <button className="rounded bg-gray text-black " >Circle</button>
-            </div>
         </div>
     )
 }
