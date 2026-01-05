@@ -13,7 +13,7 @@ export function Canvas (
     }) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    type SelectedElem = "rectangle" | "circle" | "line" | "pointer";
+    type SelectedElem = "rect" | "circle" | "line" | "pointer";
  
     const [seletedElement, setSelectedElement] = useState<SelectedElem | null>(null);
 
@@ -44,7 +44,7 @@ export function Canvas (
     return (<>
         <canvas width={window.innerWidth} height={window.innerHeight} ref={canvasRef} ></canvas>
         <div className="absolute top-20 left-50">
-            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("rectangle")}} >Rectangle</button>
+            <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("rect")}} >Rectangle</button>
             <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("circle")}} >Circle</button>
             <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("line")}} >Line</button>
             <button className="rounded bg-gray text-white border-2 border-gray-400 m-2 p-2" onClick={() => {setSelectedElement("pointer")}} >Pointer</button>

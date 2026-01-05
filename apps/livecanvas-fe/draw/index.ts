@@ -25,7 +25,7 @@ type Shape = {
     locY: number;
 };
 
-type SelectedElem = "rectangle" | "circle" | "line" | "pointer";
+type SelectedElem = "rect" | "circle" | "line" | "pointer";
 
 export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket:WebSocket, token:string , selectedElement: SelectedElem | null) {
     console.log(selectedElement)
