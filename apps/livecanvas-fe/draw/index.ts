@@ -28,7 +28,9 @@ type Shape = {
 type SelectedElem = "rect" | "circle" | "line" | "pointer";
 
 export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket:WebSocket, token:string , selectedElement: SelectedElem | null) {
-    console.log(selectedElement)
+    
+    const selectedTool = selectedElement;
+    
     const ctx = canvas.getContext("2d");
 
     let exisitingShape: Shape[] = await getExistingShape(roomId, token);
@@ -64,14 +66,26 @@ export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket
         clicked=false;
         const  width = (e.clientX -startX)
         const  height = (e.clientY - startY)
-        const shape:Shape = {
-            type: "rect",
-            x:startX,
-            y:startY,
-            width:width,
-            height:height
-        }
+        let shape:Shape | null = null;
 
+
+        if(selectedTool==="rect"){
+            shape = {
+                type: "rect",
+                x:startX,
+                y:startY,
+                width:width,
+                height:height
+        }
+        }else if(selectedTool === "circle") {
+            shape = {
+                type: "circle",
+                centerX :startX + width/2,
+                centerY : startY+ height/2,
+                radius : Math.min(width, height)/2,
+            }
+        };
+        if(!shape){return}
         exisitingShape.push(shape)
 
         socket.send(JSON.stringify({
@@ -89,7 +103,21 @@ export async function initDraw (canvas:HTMLCanvasElement, roomId: string, socket
             clearCanvas(exisitingShape, canvas,ctx);
 
             ctx.strokeStyle = "yellow"
-            ctx.strokeRect(startX,startY, width,height)
+
+            if(selectedTool=== "rect"){
+                
+                ctx.strokeRect(startX,startY, width,height)
+
+            } else if (selectedTool==="circle") {
+                const centerX = startX + width/2
+                const centerY = startY+ height/2
+                const radius = Math.min(width, height)/2
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI*2)
+
+                ctx.stroke();
+                ctx.closePath();
+            }
         }
     })
 //     canvas.addEventListener("mousedown", (e) => {
@@ -139,6 +167,12 @@ function clearCanvas(exisitingShape:Shape[], canvas:HTMLCanvasElement, ctx:Canva
         if(shape.type === "rect"){
             ctx.strokeStyle = "yellow"
             ctx.strokeRect(shape.x, shape.y, shape.width, shape.height)
+        }else if (shape.type==="circle"){
+            ctx.strokeStyle = "red",
+            ctx.beginPath();
+            ctx.arc(shape.centerX, shape.centerY, shape.radius, 0, Math.PI*2)
+            ctx.stroke();
+            ctx.closePath();
         }
     })
 
